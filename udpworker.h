@@ -4,6 +4,7 @@
 #include <QUdpSocket>
 #include <QNetworkDatagram>
 #include <QDateTime>
+#include <QDebug>
 
 
 #define BIND_PORT 12345

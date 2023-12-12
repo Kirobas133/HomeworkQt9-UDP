@@ -28,6 +28,7 @@ void UDPworker::InitUserSocket(){
     serviceUserUdpSocket = new QUdpSocket(this);
     serviceUserUdpSocket->bind(QHostAddress::LocalHost, BIND_PORT_USER);
     connect(serviceUserUdpSocket, &QUdpSocket::readyRead, this, &UDPworker::readUserPendingDatagrams);
+    qDebug() << "User Socket sucsess inited\n";
 }
 
 /*!
@@ -76,23 +77,28 @@ void UDPworker::SendUserDatagram(QString data){
     QByteArray dataToSend;
     QDataStream outStream(&dataToSend, QIODevice::WriteOnly);
     outStream << data;
+                qDebug()<<"stream is ready\n";
     serviceUserUdpSocket->writeDatagram(dataToSend, QHostAddress::LocalHost, BIND_PORT_USER);
+    qDebug()<<"datagram sended";
 }
 
 void UDPworker::readUserPendingDatagrams(void){
     while(serviceUserUdpSocket->hasPendingDatagrams()){
-            QNetworkDatagram datagram = serviceUdpSocket->receiveDatagram();
+            QNetworkDatagram datagram = serviceUserUdpSocket->receiveDatagram();
+            qDebug()<< "datagram recived";
             ReadUserDatagram(datagram);
     }
 }
 
 void UDPworker::ReadUserDatagram(QNetworkDatagram datagram){
+    qDebug()<<"datagram start decoding";
     QByteArray data;
     data = datagram.data();
     qsizetype userDataSize = data.size();
     qint64 dataSize = userDataSize;
     QHostAddress senderAddress = datagram.senderAddress();
     emit sig_senderAddress_rdy(senderAddress, dataSize);
+    qDebug()<<"datagram send to output";
 }
 
 
